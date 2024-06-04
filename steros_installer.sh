@@ -98,7 +98,7 @@ valid_user=false
 while [ "$valid_user" = false ]; do
     read -p "Enter the username of the user you want to add: " username
     # Check if the user already exists
-    if id "$username" &>/dev/null; then
+    if id "$username" >/dev/null 2>&1; then
         echo "User already exists. Please choose another username."
     else
         valid_user=true
