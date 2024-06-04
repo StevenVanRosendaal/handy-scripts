@@ -111,9 +111,15 @@ passwords_match=false
 
 while [ "$passwords_match" = false ]; do
     # Ask for the password of the user
-    read -s -p "Enter the password of the user: " password
+    echo "Enter the password of the user: "
+    stty -echo
+    read password
+    stty echo
     # Repeat the password
-    read -s -p "Repeat the password: " password2
+    echo "Repeat the password: "
+    stty -echo
+    read password2
+    stty echo
     # Check if the passwords match
     if [ "$password" != "$password2" ]; then
         echo "Passwords do not match. Please try again."
