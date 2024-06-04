@@ -219,7 +219,7 @@ if $ssh; then
     while [ "$valid_port" = false ]; do
         read -p "Enter the new SSH port: " ssh_port
         #validate the port number
-        if ! [[ $ssh_port =~ ^[0-9]+$ ]] || [ $ssh_port -lt 1 ] || [ $ssh_port -gt 65535 ]; then
+        if ! echo "$ssh_port" | grep -qE '^[0-9]+$' || [ "$ssh_port" -lt 1 ] || [ "$ssh_port" -gt 65535 ]; then
             echo "Invalid port number. Please try again."
         elif netstat -tuln | grep -q ":$ssh_port "; then
             echo "Port $ssh_port is already in use. Please choose another one."
