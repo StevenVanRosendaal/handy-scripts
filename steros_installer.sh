@@ -130,6 +130,11 @@ passwords_match=false
 # done
 
 # Configure SSH with public key authentication for the user
+if [ ! -f /etc/ssh/sshd_config ]; then
+    echo "OpenSSH server is not installed. Installing now..."
+    sudo apt-get update
+    sudo apt-get install -y openssh-server
+fi
 echo "Configuring SSH..."
 mkdir /home/$username/.ssh
 touch /home/$username/.ssh/authorized_keys
@@ -174,9 +179,9 @@ while true; do
     esac
 done
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    apt-get install libpam-google-authenticator
+    apt-get install libpam-google-authenticator -y
     # Run google-authenticator with all answers set to yes
-    su - $username -c "google-authenticator -t -d -f -r 3 -R 30 -W"
+    su - $username -c "google-authenticator"
     if ! grep -q "auth required pam_google_authenticator.so" /etc/pam.d/sshd; then
         echo "auth required pam_google_authenticator.so" >> /etc/pam.d/sshd
     fi
