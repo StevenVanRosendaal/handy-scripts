@@ -147,7 +147,7 @@ valid_key=false
 while [ "$valid_key" = false ]; do
     read -p "Enter the public key of the user: " public_key
     # Validate the public key
-    if [[ ! $public_key =~ ^ssh-rsa[[:space:]] ]] && [[ ! $public_key =~ ^ssh-ed25519[[:space:]] ]] && [[ ! $public_key =~ ^ecdsa-sha2-nistp256[[:space:]] ]]; then
+    if echo "$public_key" | grep -qvE "^ssh-rsa|^ssh-ed25519|^ecdsa-sha2-nistp256"; then
         echo "Invalid public key. Please try again."
     else
         valid_key=true
