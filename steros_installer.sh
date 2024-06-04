@@ -169,17 +169,17 @@ if grep -q "^PermitRootLogin yes" /etc/ssh/sshd_config; then
     sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 fi
 
-2fa=false
+two_fa=false
 # Configure 2FA
 while true; do
     read -p "Do you want to enable 2FA for login? (y/n) " yn
     case $yn in
-        [Yy]* ) 2fa=true; break;;
+        [Yy]* ) two_fa=true; break;;
         [Nn]* ) break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
-if $2fa; then
+if $two_fa; then
     apt-get install libpam-google-authenticator -y
     # Run google-authenticator with all answers set to yes
     su - $username -c "google-authenticator"
