@@ -30,17 +30,9 @@ echo "Checking for updates..."
 apt-get update
 apt-get upgrade -y
 
-# Install screen
-echo "Installing screen..."
-apt-get install screen -y
-
-# Install fail2ban
-echo "Installing fail2ban..."
-apt-get install fail2ban -y
-
-# Install unattended-upgrades
-echo "Installing unattended-upgrades..."
-apt-get install unattended-upgrades apt-listchanges -y
+# Install setup dependencies
+echo "Installing dependencies..."
+apt-get install screen fail2ban net-tools unattended-upgrades apt-listchanges -y
 echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections
 dpkg-reconfigure -f noninteractive unattended-upgrades
 echo 'APT::Periodic::Update-Package-Lists "1";' >> /etc/apt/apt.conf.d/20auto-upgrades
@@ -106,28 +98,6 @@ while [ "$valid_user" = false ]; do
 done
 adduser $username
 usermod -aG sudo $username
-
-# passwords_match=false
-
-# while [ "$passwords_match" = false ]; do
-#     # Ask for the password of the user
-#     echo "Enter the password of the user: "
-#     stty -echo
-#     read password
-#     stty echo
-#     # Repeat the password
-#     echo "Repeat the password: "
-#     stty -echo
-#     read password2
-#     stty echo
-#     # Check if the passwords match
-#     if [ "$password" != "$password2" ]; then
-#         echo "Passwords do not match. Please try again."
-#     else
-#         passwords_match=true
-#         echo "$username:$password" | chpasswd
-#     fi
-# done
 
 # Configure SSH with public key authentication for the user
 if [ ! -f /etc/ssh/sshd_config ]; then
