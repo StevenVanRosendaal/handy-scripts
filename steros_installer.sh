@@ -109,25 +109,25 @@ usermod -aG sudo $username
 
 passwords_match=false
 
-while [ "$passwords_match" = false ]; do
-    # Ask for the password of the user
-    echo "Enter the password of the user: "
-    stty -echo
-    read password
-    stty echo
-    # Repeat the password
-    echo "Repeat the password: "
-    stty -echo
-    read password2
-    stty echo
-    # Check if the passwords match
-    if [ "$password" != "$password2" ]; then
-        echo "Passwords do not match. Please try again."
-    else
-        passwords_match=true
-        echo "$username:$password" | chpasswd
-    fi
-done
+# while [ "$passwords_match" = false ]; do
+#     # Ask for the password of the user
+#     echo "Enter the password of the user: "
+#     stty -echo
+#     read password
+#     stty echo
+#     # Repeat the password
+#     echo "Repeat the password: "
+#     stty -echo
+#     read password2
+#     stty echo
+#     # Check if the passwords match
+#     if [ "$password" != "$password2" ]; then
+#         echo "Passwords do not match. Please try again."
+#     else
+#         passwords_match=true
+#         echo "$username:$password" | chpasswd
+#     fi
+# done
 
 # Configure SSH with public key authentication for the user
 echo "Configuring SSH..."
