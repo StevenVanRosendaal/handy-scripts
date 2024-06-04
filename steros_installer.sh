@@ -51,17 +51,17 @@ echo 'APT::Periodic::Unattended-Upgrade "1";' >> /etc/apt/apt.conf.d/20auto-upgr
 if [ "$(cat /proc/sys/net/ipv6/conf/all/disable_ipv6)" -eq 0 ]; then
     echo "IPv6 is already enabled"
 else
+    ipv6=false
     # Ask if the user wants to enable ipv6
     while true; do
         read -p "Do you want to enable IPv6? (y/n) " yn
         case $yn in
-            [Yy]* ) break;;
-            [Nn]* ) exit;;
+            [Yy]* ) ipv6=true; break;;
+            [Nn]* ) break;;
             * ) echo "Please answer yes or no.";;
         esac
     done
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if $ipv6; then
         # List the network interfaces
         echo "Network interfaces:"
         ls /sys/class/net
@@ -107,7 +107,7 @@ done
 adduser $username
 usermod -aG sudo $username
 
-passwords_match=false
+# passwords_match=false
 
 # while [ "$passwords_match" = false ]; do
 #     # Ask for the password of the user
@@ -169,16 +169,17 @@ if grep -q "^PermitRootLogin yes" /etc/ssh/sshd_config; then
     sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 fi
 
+2fa=false
 # Configure 2FA
 while true; do
     read -p "Do you want to enable 2FA for login? (y/n) " yn
     case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
+        [Yy]* ) 2fa=true; break;;
+        [Nn]* ) break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+if $2fa; then
     apt-get install libpam-google-authenticator -y
     # Run google-authenticator with all answers set to yes
     su - $username -c "google-authenticator"
@@ -197,20 +198,22 @@ fi
 
 # Setup firewall
 echo "Setting up the firewall..."
-apt-get install ufw
+apt-get install ufw -y
 ufw default deny incoming
 ufw default allow outgoing
 
-# Change the ssh port
+
+ssh=false
+# Change the SSH port
 while true; do
     read -p "Do you want to change the SSH port? (y/n) " yn
     case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
+        [Yy]* ) ssh=true; break;;
+        [Nn]* ) break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+if $ssh; then
     valid_port=false
 
     while [ "$valid_port" = false ]; do
