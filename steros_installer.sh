@@ -203,7 +203,54 @@ else
     ufw allow ssh
 fi
 
-ufw enable
+multi_site=false
+# Extended installation
+while true; do
+    read -p "Do you want to install the multi-site VPS software? (y/n) " yn
+    case $yn in
+        [Yy]* ) multi_site=true; break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+if $multi_site; then
+    echo "Installing Docker..."
+    apt-get install ca-certificates curl -y
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+    chmod a+r /etc/apt/keyrings/docker.asc
+    echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null
+    apt-get update
+    apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    usermod -aG docker $username
+
+    echo "Installing Portainer..."
+    docker volume create portainer_data
+    docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
+    ufw allow 8000/tcp
+    ufw allow 9000/tcp
+    ufw allow 9443/tcp
+
+    echo "Installing Traefik..."
+    mkdir /home/$username/traefik
+    touch /home/$username/traefik/traefik.yml
+    curl -L https://raw.githubusercontent.com/StevenVanRosendaal/handy-scripts/master/traefik.yaml -o /home/$username/traefik/traefik.yml
+    read -p "Enter your email address: " email
+    sed -i "s/your-email@domain.tld/$email/g" /home/$username/traefik/traefik.yml
+    chown -R $username:$username /home/$username/traefik
+    chmod 700 /home/$username/traefik
+    chmod 600 /home/$username/traefik/traefik.yml
+    docker volume create traefik-ssl-certs
+    docker run -d --restart unless-stopped --name traefik -p 443:443 -p 80:80 \
+    -v traefik-ssl-certs:/ssl-certs \
+    -v /var/run/docker.sock:/var/run/docker.sock:ro \
+    -v /home/$username/traefik:/etc/traefik traefik:v3.0
+    ufw allow 443/tcp
+    ufw allow 80/tcp
+fi
 
 echo "Steros has been installed successfully. The system will now restart the SSH services and network interfaces which will disconnect you from the server. Please reconnect to the server as the new user."
 
@@ -212,4 +259,7 @@ screen -dm bash -c "
     systemctl restart sshd
     ifdown $interface
     ifup $interface
+    ufw enable
+    exit
 "
+
