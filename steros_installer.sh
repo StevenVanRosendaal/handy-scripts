@@ -4,7 +4,14 @@
 set -e
 
 echo "This script installs the Steros software on a Linux system."
-read -p "Do you want to continue? (y/n) " -n 1 -r
+while true; do
+    read -p "Do you want to continue? (y/n) " yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
 
 # Check if the user is root
 if [ "$(id -u)" != "0" ]; then
@@ -45,7 +52,14 @@ if [ "$(cat /proc/sys/net/ipv6/conf/all/disable_ipv6)" -eq 0 ]; then
     echo "IPv6 is already enabled"
 else
     # Ask if the user wants to enable ipv6
-    read -p "Do you want to enable IPv6? (y/n) " -n 1 -r
+    while true; do
+        read -p "Do you want to enable IPv6? (y/n) " yn
+        case $yn in
+            [Yy]* ) break;;
+            [Nn]* ) exit;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         # List the network interfaces
@@ -145,7 +159,14 @@ if grep -q "^PermitRootLogin yes" /etc/ssh/sshd_config; then
 fi
 
 # Configure 2FA
-read -p "Do you want to enable 2FA for login? (y/n) " -n 1 -r
+while true; do
+    read -p "Do you want to enable 2FA for login? (y/n) " yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     apt-get install libpam-google-authenticator
     # Run google-authenticator with all answers set to yes
@@ -170,7 +191,14 @@ ufw default deny incoming
 ufw default allow outgoing
 
 # Change the ssh port
-read -p "Do you want to change the SSH port? (y/n) " -n 1 -r
+while true; do
+    read -p "Do you want to change the SSH port? (y/n) " yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     valid_port=false
 
