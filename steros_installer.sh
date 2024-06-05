@@ -132,7 +132,7 @@ if grep -q "^PasswordAuthentication yes" /etc/ssh/sshd_config; then
     sed -i 's/#PasswordAuthentication no/PasswordAuthentication no/g' /etc/ssh/sshd_config
 fi
 
-if grep -q "^#PubkeyAuthentication no" /etc/ssh/sshd_config; then
+if grep -q "^PubkeyAuthentication no" /etc/ssh/sshd_config; then
     sed -i 's/PubkeyAuthentication no/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
     sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
 fi
@@ -162,10 +162,12 @@ if $two_fa; then
 
     if grep -q "UsePam no" /etc/ssh/sshd_config; then
         sed -i 's/UsePam no/UsePam yes/g' /etc/ssh/sshd_config
+        sed -i 's/#UsePam yes/UsePam yes/g' /etc/ssh/sshd_config
     fi
 
     if grep -q "ChallengeResponseAuthentication no" /etc/ssh/sshd_config; then
         sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+        sed -i 's/#ChallengeResponseAuthentication yes/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
     fi
 fi
 
