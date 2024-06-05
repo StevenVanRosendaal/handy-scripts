@@ -129,14 +129,17 @@ echo $public_key >> /home/$username/.ssh/authorized_keys
 # Configure the sshd_config file to disable password authentication and enable public key authentication
 if grep -q "^PasswordAuthentication yes" /etc/ssh/sshd_config; then
     sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+    sed -i 's/#PasswordAuthentication no/PasswordAuthentication no/g' /etc/ssh/sshd_config
 fi
 
-if grep -q "^PubkeyAuthentication no" /etc/ssh/sshd_config; then
+if grep -q "^#PubkeyAuthentication no" /etc/ssh/sshd_config; then
     sed -i 's/PubkeyAuthentication no/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
+    sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
 fi
 
 if grep -q "^PermitRootLogin yes" /etc/ssh/sshd_config; then
     sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
+    sed -i 's/#PermitRootLogin no/PermitRootLogin no/g' /etc/ssh/sshd_config
 fi
 
 two_fa=false
