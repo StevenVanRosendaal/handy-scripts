@@ -3,16 +3,6 @@
 # Set -e: Exit immediately if a command exits with a non-zero status.
 set -e
 
-echo "This script installs the Steros software on a Linux system."
-while true; do
-    read -p "Do you want to continue? (y/n) " yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer yes or no.";;
-    esac
-done
-
 # Check if the user is root
 if [ "$(id -u)" != "0" ]; then
     echo "This script must be run as root" 1>&2
@@ -24,6 +14,16 @@ if [ ! -f /etc/debian_version ]; then
     echo "Unsupported OS"
     exit 1
 fi
+
+echo "This script installs the Steros software on a Linux system."
+while true; do
+    read -p "Do you want to continue? (y/n) " yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
 
 # Check for updates
 echo "Checking for updates..."
