@@ -32,7 +32,7 @@ apt-get upgrade -y
 
 # Install setup dependencies
 echo "Installing dependencies..."
-apt-get install screen fail2ban net-tools unattended-upgrades apt-listchanges -y
+apt-get install fail2ban net-tools unattended-upgrades apt-listchanges -y
 echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections
 dpkg-reconfigure -f noninteractive unattended-upgrades
 echo 'APT::Periodic::Update-Package-Lists "1";' >> /etc/apt/apt.conf.d/20auto-upgrades
@@ -257,14 +257,7 @@ if $multi_site; then
     ufw allow 80/tcp
 fi
 
-echo "Steros has been installed successfully. The system will now restart the SSH services and network interfaces which will disconnect you from the server. Please reconnect to the server as the new user."
+echo "Steros has been installed successfully. The system will now restart. Please wait until the server has restarted and reconnect to the server as the new user. Remember to use the new SSH port if you changed it, and to use your private key."
 
-# Start a new screen session in detached mode, then run the commands
-screen -dm bash -c "
-    systemctl restart sshd
-    ifdown $interface
-    ifup $interface
-    ufw enable
-    exit
-"
-
+ufw enable
+reboot now
